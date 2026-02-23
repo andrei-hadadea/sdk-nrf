@@ -60,7 +60,6 @@ extern "C" {
  * @param _clean_request   Pointer to the data clean request callback function.
  */
 #define ACCEL_TO_ANGLE_FILTER_DEFINE(_instance_name, _ctx, _process_request, _clean_request)	\
-	BUILD_ASSERT(_process_request != NULL, "No process request callback provided");		\
 	struct accel_to_angle_filter _instance_name = {						\
 		.ctx = _ctx,									\
 		.data_process_request = _process_request,					\
@@ -180,6 +179,10 @@ int accel_to_angle_filter_set(struct accel_to_angle_ctx *ctx,
  * The calculated pitch and roll angles are stored in the provided @ref accel_to_angle_pr_data
  * struct.
  *
+ * The provided @ref accel_to_angle_pr_data structure can be NULL.
+ * In this case, the function will only update the internal state of the context instance, and
+ * the calculated pitch and roll angles will not be returned to the caller.
+ *
  * If a filter is set in the @ref accel_to_angle_ctx context, it is applied to the
  * accelerometer data before calculating the rotation.
  * Otherwise, the raw accelerometer data is used.
@@ -188,12 +191,13 @@ int accel_to_angle_filter_set(struct accel_to_angle_ctx *ctx,
  * @param[in] vals Array of sensor values containing accelerometer data for X, Y, Z axes.
  * @param[out] pr  Pointer to the structure with pitch and roll data where the calculated
  *                 rotation (in degrees) is stored.
+ *                 This can be NULL if the calculated rotation is not needed.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
 int accel_to_angle_calc(struct accel_to_angle_ctx *ctx,
-			struct sensor_value vals[ACCEL_TO_ANGLE_AXIS_NUM],
+			const struct sensor_value vals[ACCEL_TO_ANGLE_AXIS_NUM],
 			struct accel_to_angle_pr_data *pr);
 
 /**
@@ -201,11 +205,13 @@ int accel_to_angle_calc(struct accel_to_angle_ctx *ctx,
  *
  * The function checks if the change in rotation exceeds the specified threshold
  * on at least the specified number of axes.
+ * To perform this check, the function uses the cumulative angle difference stored in the
+ * context instance, which is updated after each invocation of the @ref accel_to_angle_calc
+ * API function using its output parameter.
  *
  * If the threshold is exceeded the function clears the cumulative difference in the context.
  *
  * @param[in] ctx                Pointer to the @ref accel_to_angle_ctx context.
- * @param[in] pr                 Pointer to the current pitch and roll data.
  * @param[in] pr_threshold_deg   Rotation threshold in degrees for pitch and roll.
  * @param[in] axis_threshold_num Number of axes that must exceed the threshold to consider
  *                               the rotation change significant.
@@ -215,9 +221,8 @@ int accel_to_angle_calc(struct accel_to_angle_ctx *ctx,
  * @retval false Otherwise.
  */
 bool accel_to_angle_diff_check(struct accel_to_angle_ctx *ctx,
-			       struct accel_to_angle_pr_data *pr,
-			       struct accel_to_angle_pr_data *pr_threshold_deg,
-			       uint8_t axis_threshold_num);
+			       const struct accel_to_angle_pr_data *pr_threshold_deg,
+			       const uint8_t axis_threshold_num);
 
 /**
  * @brief Clean the internal state of the context instance.

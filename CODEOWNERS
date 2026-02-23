@@ -342,7 +342,7 @@
 /include/drivers/mspi/hpf_mspi.h          @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /include/drivers/sensor_sim.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/drivers/sensor_stub.h            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
-/include/emds/                            @balaklaka @nrfconnect/ncs-paladin
+/include/emds/                            @nrfconnect/ncs-paladin
 /include/fem_al/                          @nrfconnect/ncs-dragoon
 /include/hpf/                             @nrfconnect/ncs-ll-ursus
 /include/logging/                         @nrfconnect/ncs-protocols-serialization
@@ -712,6 +712,7 @@
 /scripts/ci/tags_sdk_zephyr.yaml          @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
 /scripts/ci/twister_ignore.txt            @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
 /scripts/ci/twister_ignore_sdk_zephyr.txt @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
+/scripts/ci/twister_platforms_zephyr.yaml @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
 /scripts/quarantine*.yaml                 @nrfconnect/ncs-test-leads
 /scripts/hid_configurator/                @nrfconnect/ncs-si-xcake
 /scripts/nrf_profiler/                    @nrfconnect/ncs-si-xcake
@@ -743,6 +744,7 @@
 /scripts/nrf_provision/fast_pair/*.rst    @nrfconnect/ncs-si-bluebagel-doc
 /scripts/partition_manager/*.rst          @nrfconnect/ncs-aurora-doc
 /scripts/generate_psa_key_attributes/*.rst @nrfconnect/ncs-aegir-doc
+/scripts/shell/*.rst                      @nrfconnect/ncs-blenders-doc
 /scripts/shell/ble_console/**/*.rst       @nrfconnect/ncs-doc-leads
 /scripts/west_commands/sbom/*.rst         @nrfconnect/ncs-co-doc @nrfconnect/ncs-doc-leads
 /scripts/esb_sniffer/*.rst                @nrfconnect/ncs-si-xcake-doc
@@ -809,7 +811,7 @@
 /subsys/dfu/dfu_multi_image/              @Damian-Nordic @nrfconnect/ncs-eris
 /subsys/dm/                               @nrfconnect/ncs-blenders
 /subsys/dult/                             @nrfconnect/ncs-si-bluebagel
-/subsys/emds/                             @balaklaka @nrfconnect/ncs-paladin
+/subsys/emds/                             @nrfconnect/ncs-paladin
 /subsys/esb/                              @nrfconnect/ncs-si-xcake
 /subsys/event_manager_proxy/              @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /subsys/fw_info/                          @nrfconnect/ncs-eris
@@ -947,7 +949,7 @@
 /tests/subsys/debug/cpu_load/             @nordic-krch
 /tests/subsys/dfu/                        @nrfconnect/ncs-eris
 /tests/subsys/dfu/dfu_multi_image/        @Damian-Nordic
-/tests/subsys/emds/                       @balaklaka @nrfconnect/ncs-paladin
+/tests/subsys/emds/                       @nrfconnect/ncs-paladin
 /tests/subsys/event_manager_proxy/        @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /tests/subsys/fw_info/                    @nrfconnect/ncs-eris
 /tests/subsys/ipc/                        @nrfconnect/ncs-low-level-test @anangl
@@ -1004,6 +1006,7 @@
 /tests/zephyr/kernel/timer/timer_behavior/ @nrfconnect/ncs-low-level-test
 /tests/zephyr/subsys/secure_storage/      @nrfconnect/ncs-aegir
 /tests/zephyr/subsys/settings/performance/ @nrfconnect/ncs-eris @rghaddab
+/tests/zephyr/bluetooth/tester/host/       @nrfconnect/ncs-paladin
 
 /tests/benchmarks/multicore/idle/*.rst    @nrfconnect/ncs-lowlevel-doc
 /tests/benchmarks/multicore/idle_gpio/*.rst @nrfconnect/ncs-lowlevel-doc

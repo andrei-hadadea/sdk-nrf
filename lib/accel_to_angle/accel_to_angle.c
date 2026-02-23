@@ -122,7 +122,7 @@ static void accel_m_s2_to_g_convert(struct accel_to_angle_accel_data *data)
 	data->z /= G_CONSTANT;
 }
 
-static void sensor_value_to_accel_data(struct sensor_value vals[ACCEL_TO_ANGLE_AXIS_NUM],
+static void sensor_value_to_accel_data(const struct sensor_value vals[ACCEL_TO_ANGLE_AXIS_NUM],
 				       struct accel_to_angle_accel_data *data)
 {
 	__ASSERT_NO_MSG(vals);
@@ -218,8 +218,8 @@ static inline bool pr_threshold_check(float angle_deg, float pr_threshold_deg)
 }
 
 static bool motion_detected_check(struct accel_to_angle_pr_data *diff,
-				  struct accel_to_angle_pr_data *pr_threshold_deg,
-				  uint8_t axis_threshold_num)
+				  const struct accel_to_angle_pr_data *pr_threshold_deg,
+				  const uint8_t axis_threshold_num)
 {
 	__ASSERT_NO_MSG(diff);
 	__ASSERT_NO_MSG(pr_threshold_deg);
@@ -278,30 +278,34 @@ int accel_to_angle_filter_set(struct accel_to_angle_ctx *ctx,
 }
 
 int accel_to_angle_calc(struct accel_to_angle_ctx *ctx,
-		      struct sensor_value vals[ACCEL_TO_ANGLE_AXIS_NUM],
-		      struct accel_to_angle_pr_data *pr)
+			const struct sensor_value vals[ACCEL_TO_ANGLE_AXIS_NUM],
+			struct accel_to_angle_pr_data *pr)
 {
 	struct accel_to_angle_accel_data data;
+	struct accel_to_angle_pr_data tmp;
 
-	if (!ctx || !vals || !pr) {
+	if (!ctx || !vals) {
 		return -EINVAL;
 	}
 
 	sensor_value_to_accel_data(vals, &data);
 	accel_data_process(ctx, &data);
-	pr_compute(&data, pr);
-	pr_data_process(ctx, pr);
-	last_diff_update(ctx, pr);
+	pr_compute(&data, &tmp);
+	pr_data_process(ctx, &tmp);
+	last_diff_update(ctx, &tmp);
+
+	if (pr) {
+		*pr = tmp;
+	}
 
 	return 0;
 }
 
 bool accel_to_angle_diff_check(struct accel_to_angle_ctx *ctx,
-			       struct accel_to_angle_pr_data *pr,
-			       struct accel_to_angle_pr_data *pr_threshold_deg,
-			       uint8_t axis_threshold_num)
+			       const struct accel_to_angle_pr_data *pr_threshold_deg,
+			       const uint8_t axis_threshold_num)
 {
-	if (!ctx || !pr || !pr_threshold_deg) {
+	if (!ctx || !pr_threshold_deg) {
 		LOG_ERR("No context or PR data provided");
 		return false;
 	}

@@ -131,6 +131,8 @@ Security
   * Support for the secp384r1 key storage in the :ref:`Key Management Unit (KMU) <ug_nrf54l_crypto_kmu_supported_key_types>`.
   * Support for AES-GCM AEAD using CRACEN for the :ref:`nrf54lm20dk <app_boards>` board.
   * Support for ChaCha20-Poly1305 AEAD using CRACEN for the :ref:`nrf54lm20dk <app_boards>` board.
+  * Support for AES Key Wrap (AES-KW) and AES Key Wrap with Padding (AES-KWP) algorithms in the :ref:`nrf_oberon <crypto_drivers_oberon>` and :ref:`CRACEN <crypto_drivers_cracen>` drivers.
+    The :ref:`Supported cryptographic operations in the nRF Connect SDK <ug_crypto_supported_features_key_wrap_algorithms>` page has been updated accordingly.
 
 * Updated:
 
@@ -385,7 +387,9 @@ Bluetooth Mesh samples
 Bluetooth Fast Pair samples
 ---------------------------
 
-|no_changes_yet_note|
+* :ref:`fast_pair_locator_tag` sample:
+
+  * Updated the motion detector sensor on Thingy:53 target from gyroscope to accelerometer.
 
 Cellular samples
 ----------------
@@ -640,6 +644,11 @@ Modem libraries
 
 * :ref:`lib_location` library:
 
+  * Added:
+
+    * The :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SCANNING_PARAMS_OVERRIDE` Kconfig option and related options :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SCANNING_DWELL_TIME_ACTIVE` and :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SCANNING_DWELL_TIME_PASSIVE` to configure Wi-Fi scan parameters.
+    * The :c:enumerator:`LOCATION_EVT_CANCELLED` event that notifies the application when a location request has been cancelled.
+
   * Fixed a bug where GNSS was never stopped if the :c:func:`location_cloud_location_ext_result_set` function was called during GNSS method execution.
 
 Multiprotocol Service Layer libraries
@@ -687,6 +696,11 @@ Other libraries
 * Deprecated :ref:`ei_wrapper` library.
   Replaced by Edge Impulse SDK in `Edge AI Add-on for nRF Connect SDK`_.
 
+* :ref:`emds_readme` library:
+
+  * Removed strict dependency on the Partition Manager.
+    The Partition Manager can still be used with the library, but it is deprecated and not recommended for new designs.
+
 Shell libraries
 ---------------
 
@@ -731,6 +745,7 @@ Memfault integration
 
   * The :kconfig:option:`CONFIG_MEMFAULT_NCS_POST_INITIAL_HEARTBEAT_ON_NETWORK_CONNECTED` Kconfig option to control whether an initial heartbeat is sent when the device connects to a network
     This shows the device status and initial metrics in the Memfault dashboard soon after boot.
+  * Support for recording location metrics when using external cloud location services (:kconfig:option:`CONFIG_LOCATION_SERVICE_EXTERNAL`).
 
 AVSystem integration
 --------------------
@@ -807,4 +822,6 @@ cJSON
 Documentation
 =============
 
+* Added a section in :ref:`ug_nrf54h20_pm_optimization` about optimizing power on the nRF54H20 SoC by relocating the radio core firmware to TCM.
 * Removed references to JITP in different areas of the documentation.
+* Updated the :ref:`emds_readme` library documentation to use static device tree partitions instead of the Partition Manager.

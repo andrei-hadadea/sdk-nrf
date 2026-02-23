@@ -16,6 +16,9 @@
       - "!VERSION"
       - "!ncs_version.h.in"
 
+"CI-run-zephyr-twister":
+  - "scripts/ci/twister_platforms_zephyr.yaml"
+
 "CI-tool-test-linux":
   - "scripts/requirements*.txt"
   - "scripts/tools-versions-linux.yml"
@@ -163,6 +166,7 @@
   - "scripts/nrf_compress/**/*"
   - "scripts/west_commands/ncs*"
   - "subsys/bootloader/**/*"
+  - "subsys/dfu/**/*"
   - "subsys/partition_manager/*"
   - "subsys/fw_info/**/*"
   - "subsys/mgmt/**/*"
@@ -226,7 +230,6 @@
   - any:
       - "include/bluetooth/**/*"
       - "!include/bluetooth/mesh/**/*"
-
 
 "CI-mesh-test":
   - "subsys/bluetooth/mesh/**/*"

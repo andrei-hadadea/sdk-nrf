@@ -145,8 +145,9 @@ ZTEST(spim_pan, test_spim_mltpan_55_workaround)
 	zassert_ok(err, "SPI transceive failed: %d\n", err);
 	timer_cc_after = nrfx_timer_capture(&test_timer, NRF_TIMER_CC_CHANNEL0);
 
-	nrfx_gppi_conn_disable(gppi_handle);
 	nrfx_timer_uninit(&test_timer);
+	nrfx_gppi_conn_disable(gppi_handle);
+	nrfx_gppi_conn_free(spim_event, timer_task, gppi_handle);
 
 	zassert_true((timer_cc_after - timer_cc_before) > 0,
 		     "NRF_SPIM_EVENT_END did not trigger\n");
@@ -184,10 +185,10 @@ ZTEST(spim_pan, test_spim_mltpan_57_workaround)
 		   "Failed to allocate DPPI connection\n");
 	nrfx_gppi_conn_enable(gppi_handle);
 
-	struct spi_buf tx_spi_buf = {.buf = tx_buffer, .len = TEST_BUFFER_SIZE / 2};
+	struct spi_buf tx_spi_buf = {.buf = tx_buffer, .len = TEST_BUFFER_SIZE};
 	struct spi_buf_set tx_spi_buf_set = {.buffers = &tx_spi_buf, .count = 1};
 
-	struct spi_buf rx_spi_buf = {.buf = rx_buffer, .len = TEST_BUFFER_SIZE / 2 + 1};
+	struct spi_buf rx_spi_buf = {.buf = rx_buffer, .len = TEST_BUFFER_SIZE};
 	struct spi_buf_set rx_spi_buf_set = {.buffers = &rx_spi_buf, .count = 1};
 
 	for (int i = 0; i < MAX_READ_REPEATS; i++) {
@@ -222,6 +223,7 @@ ZTEST(spim_pan, test_spim_mltpan_57_workaround)
 
 	nrfx_timer_uninit(&test_timer);
 	nrfx_gppi_conn_disable(gppi_handle);
+	nrfx_gppi_conn_free(spim_event, timer_task, gppi_handle);
 #endif
 }
 
@@ -272,6 +274,7 @@ ZTEST(spim_pan, test_spim_mltpan_69_workaround)
 
 	nrfx_timer_uninit(&test_timer);
 	nrfx_gppi_conn_disable(gppi_handle);
+	nrfx_gppi_conn_free(spim_event, timer_task, gppi_handle);
 
 	TC_PRINT("NRF_SPIM_EVENT_STOPPED events count: %u\n", timer_cc_after - timer_cc_before);
 	zassert_true((timer_cc_after - timer_cc_before) > 0,

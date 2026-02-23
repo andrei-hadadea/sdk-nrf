@@ -20,6 +20,7 @@
 #include "ba414_status.h"
 #include <silexpk/iomem.h>
 #include <cracen/statuscodes.h>
+#include <cracen/mem_helpers.h>
 #include "../../include/sx_regs.h"
 #include <silexpk/cmddefs/rsa.h>
 #include <silexpk/cmddefs/modmath.h>
@@ -170,7 +171,8 @@ int sx_pk_list_ecc_inslots(sx_pk_req *req, const struct sx_pk_ecurve *curve, int
 	int slot_size = req->slot_sz;
 	int i = 0;
 	const struct sx_pk_capabilities *caps;
-	struct sx_pk_blinder *bldr = *sx_pk_get_blinder(req->cnx);
+	int status;
+	sx_pk_blind_factor bld_factor;
 
 	if (sx_pk_ik_mode(req)) {
 		sx_pk_release_req(req);
@@ -191,7 +193,7 @@ int sx_pk_list_ecc_inslots(sx_pk_req *req, const struct sx_pk_ecurve *curve, int
 	}
 	req->op_size = curve->sz;
 
-	if (bldr && req->cmd->blind_flags) {
+	if (req->cmd->blind_flags) {
 		flags |= req->cmd->blind_flags;
 	}
 	write_command(req, curve->sz, curve->curveflags | flags);
@@ -210,8 +212,15 @@ int sx_pk_list_ecc_inslots(sx_pk_req *req, const struct sx_pk_ecurve *curve, int
 	}
 	sx_pk_write_curve(req, curve);
 
-	if (bldr && req->cmd->blind_flags) {
-		sx_pk_blind(req, bldr->generate(bldr));
+	if (req->cmd->blind_flags) {
+		status = sx_pk_get_blinding_factor(&bld_factor);
+		if (status != SX_OK) {
+			sx_pk_release_req(req);
+			return status;
+		}
+
+		sx_pk_blind(req, bld_factor);
+		safe_memzero(&bld_factor, sizeof(bld_factor));
 	}
 	return 0;
 }
@@ -236,22 +245,21 @@ int sx_pk_list_gfp_inslots(sx_pk_req *req, const int *opsizes, struct sx_pk_slot
 	int slot_size = req->slot_sz;
 	int i = 0;
 	const struct sx_pk_capabilities *caps;
-	struct sx_pk_blinder *bldr = *sx_pk_get_blinder(req->cnx);
 	uint32_t flags = 0;
+	int status;
+	sx_pk_blind_factor bld_factor;
 
 	if (sx_pk_ik_mode(req)) {
-		sx_pk_release_req(req);
 		return SX_ERR_IK_MODE;
 	}
 
 	req->op_size = sx_pk_gfcmd_opsize(req->cmd, opsizes);
 	caps = sx_pk_fetch_capabilities();
 	if (req->op_size > caps->max_gfp_opsz) {
-		sx_pk_release_req(req);
 		return SX_ERR_OPERAND_TOO_LARGE;
 	}
 
-	if (bldr && req->cmd->blind_flags) {
+	if (req->cmd->blind_flags) {
 		flags |= req->cmd->blind_flags;
 	}
 	write_command(req, req->op_size, flags);
@@ -263,7 +271,6 @@ int sx_pk_list_gfp_inslots(sx_pk_req *req, const int *opsizes, struct sx_pk_slot
 		for (; slots; slots >>= 1, cryptoram += slot_size) {
 			if (slots & 1) {
 				if (opsizes[i] > req->op_size) {
-					sx_pk_release_req(req);
 					return SX_ERR_OPERAND_TOO_LARGE;
 				}
 				sx_clrpkmem(cryptoram, req->op_size - opsizes[i]);
@@ -275,7 +282,6 @@ int sx_pk_list_gfp_inslots(sx_pk_req *req, const int *opsizes, struct sx_pk_slot
 	for (; slots; slots >>= 1, cryptoram += slot_size) {
 		if (slots & 1) {
 			if (opsizes[i] > req->op_size) {
-				sx_pk_release_req(req);
 				return SX_ERR_OPERAND_TOO_LARGE;
 			}
 			inputs[i].addr = cryptoram;
@@ -284,7 +290,14 @@ int sx_pk_list_gfp_inslots(sx_pk_req *req, const int *opsizes, struct sx_pk_slot
 		}
 	}
 	if (flags) {
-		sx_pk_blind(req, bldr->generate(bldr));
+		status = sx_pk_get_blinding_factor(&bld_factor);
+		if (status != SX_OK) {
+			sx_pk_release_req(req);
+			return status;
+		}
+
+		sx_pk_blind(req, bld_factor);
+		safe_memzero(&bld_factor, sizeof(bld_factor));
 	}
 
 	return 0;

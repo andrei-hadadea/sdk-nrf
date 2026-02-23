@@ -69,6 +69,11 @@ Limitations
 
 Due to the nature of mathematical calculations involved in converting accelerometer data to rotation data, the library can only calculate pitch and roll angles (without yaw).
 
+Samples using the library
+*************************
+
+The :ref:`fast_pair_locator_tag` sample uses this library.
+
 Dependencies
 ************
 

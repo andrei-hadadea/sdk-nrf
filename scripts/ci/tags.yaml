@@ -915,6 +915,7 @@ ci_tests_bluetooth_tester:
     - nrf/include/bluetooth/mesh/
     - nrf/subsys/bluetooth/mesh/
     - nrf/tests/bluetooth/tester/mmdl/
+    - nrf/tests/zephyr/bluetooth/tester/host/
     - zephyr/include/zephyr/bluetooth/mesh/
     - zephyr/subsys/bluetooth/mesh/
 
@@ -1734,6 +1735,7 @@ ci_samples_zephyr_boards_nordic_nrf_sys_event:
 ci_samples_zephyr_boards_nordic_nrfx:
   files:
     - nrf/samples/zephyr/boards/nordic/nrfx/
+    - zephyr/modules/hal_nordic/
     - zephyr/samples/boards/nordic/nrfx/
 
 ci_samples_zephyr_boards_nordic_spis_wakeup:

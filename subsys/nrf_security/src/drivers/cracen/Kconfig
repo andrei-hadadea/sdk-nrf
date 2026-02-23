@@ -11,19 +11,19 @@ config CRACEN_HW_VERSION_BASE
 	def_bool SOC_SERIES_NRF54H || SOC_NRF54L15 || SOC_NRF54L10 || SOC_NRF54L05
 
 config CRACEN_HW_VERSION_LITE
-	def_bool SOC_NRF54LM20A || SOC_NRF54LV10A || SOC_NRF7120_ENGA
+	def_bool SOC_NRF54LM20A || SOC_NRF54LM20B || SOC_NRF54LV10A || SOC_NRF7120_ENGA
 
 config CRACEN_KMU_HW_PRESENT
 	def_bool SOC_SERIES_NRF54L || SOC_SERIES_NRF71
 
 config PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS
-	def_bool SOC_NRF54LM20A
+	def_bool SOC_NRF54LM20A || SOC_NRF54LM20B
 
 config PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS
 	def_bool PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS || SOC_NRF54LV10A
 
 config PSA_NEED_CRACEN_IKG_INTERRUPT_WORKAROUND
-	def_bool SOC_NRF54LM20A || SOC_NRF54LV10A || SOC_NRF7120_ENGA
+	def_bool SOC_NRF54LM20A || SOC_NRF54LM20B || SOC_NRF54LV10A || SOC_NRF7120_ENGA
 
 config PSA_NEED_CRACEN_RNG_NO_ENTROPY_WORKAROUND
 	# TODO: Revisit once pre-silicon targets are added
@@ -132,6 +132,28 @@ config CRACEN_USE_INTERRUPTS
 	  Run CRACEN using supported interrupts.
 	  If this is turned off CRACEN uses active polling instead,
 	  which may have an impact on performance.
+
+config CRACEN_ENABLE_ECC_EXTENDED_COUNTERMEASURES
+	def_bool CRACEN_HW_VERSION_LITE
+	depends on CRACEN_ENABLE_ECC_COUNTERMEASURES
+
+config CRACEN_ENABLE_ECC_COUNTERMEASURES
+	bool "CRACEN ECC countermeasures"
+	default y
+	help
+	  Enable Cracen ECC countermeasures, using scalar randomization
+	  and projective coordinate randomization.
+
+	  In nRF54H20, nRF54L05, nRF54L10, and nRF54L15 the countermeasures
+	  are available for the following operations:
+	  - ECDSA signature generation and public key generation
+	  - ECC point multiplication
+
+	  In nRF54LM20X, nRF54LV10A, and nRF7120 the countermeasures the following
+	  countermerasures are available in adddition to the above operations:
+	  - Montgomery curve multiplication
+	  - EdDSA base point multiplication
+	  - Edwards point multiplication
 
 rsource 'psa_driver.Kconfig'
 
