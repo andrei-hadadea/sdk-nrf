@@ -178,7 +178,12 @@ int cracen_rsa_pss_sign_digest(struct cracen_rsa_key *rsa_key, struct cracen_sig
 	/* Copy the message digest to workmem. */
 	memcpy(workmem.mHash, digest, digestsz);
 
-	psa_status = cracen_get_random(NULL, workmem.salt, saltsz);
+	if (IS_ENABLED(PSA_NEED_CRACEN_CTR_DRBG_DRIVER)) {
+		psa_status = cracen_get_random(NULL, workmem.salt, saltsz);
+	} else {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
 	if (psa_status != PSA_SUCCESS) {
 		return SX_ERR_UNKNOWN_ERROR;
 	}

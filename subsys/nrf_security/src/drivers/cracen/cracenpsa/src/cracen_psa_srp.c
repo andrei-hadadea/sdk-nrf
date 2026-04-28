@@ -201,7 +201,12 @@ static psa_status_t cracen_srp_calculate_client_key_share(cracen_srp_operation_t
 	sx_pk_req req;
 
 	/* a <- random() */
-	status = cracen_get_random(NULL, operation->ab, sizeof(operation->ab));
+	if (IS_ENABLED(PSA_NEED_CRACEN_CTR_DRBG_DRIVER)) {
+		status = cracen_get_random(NULL, operation->ab, sizeof(operation->ab));
+	} else {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
@@ -243,7 +248,12 @@ static psa_status_t cracen_srp_calculate_server_key_share(cracen_srp_operation_t
 	uint8_t k_value[CRACEN_SRP_FIELD_SIZE] = {0};
 
 	/* b <- random() */
-	status = cracen_get_random(NULL, operation->ab, sizeof(operation->ab));
+	if (IS_ENABLED(PSA_NEED_CRACEN_CTR_DRBG_DRIVER)) {
+		status = cracen_get_random(NULL, operation->ab, sizeof(operation->ab));
+	} else {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
